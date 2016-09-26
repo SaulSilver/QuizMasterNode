@@ -13,10 +13,12 @@ function nickname() {
   }
 }
 
-/*To start the quiz*/
+/*To start the quiz with only the first question*/
 window.addEventListener('load', function () {
   var page_url = window.location.href;
-  if (page_url.includes('start')) {
+
+  //Check if this is the first question
+  if (page_url.includes('start.html?contestant_name')) {
     //TODO: Get the user nickname from local storage
     var para = document.createElement('p');
     var nick = localStorage.getItem('username') ||'Default Nickname';
@@ -27,7 +29,7 @@ window.addEventListener('load', function () {
 
     var oReq = new XMLHttpRequest();
     oReq.addEventListener('load', reqListener);
-    oReq.open('GET', 'http://vhost3.lnu.se:20080/question/1');
+    oReq.open('GET', 'http://vhost3.lnu.se:20080/question/1', true);
     oReq.send();
   }
 }, false);
@@ -40,16 +42,21 @@ function reqListener() {
 
   var question_label = document.getElementById('question_label');
   question_label.innerHTML = 'Question number ' + parsedJSON['id'] + ':\n' + parsedJSON['question'];
-
+  alert(parsedJSON['question']);
 //TODO:on submit button, post the answer to the new url
   var submit_button = document.getElementById('submit_button');
 
   submit_button.addEventListener('click', function (event) {
+    alert("Submission button triggered");
     var answer = document.getElementById('user_answer');
 
+    var jsonObject = {"answer": answer, "content-type": "text"};
+    JSON.stringify(jsonObject);
+    debugger;
     var oReq = new XMLHttpRequest();
     oReq.addEventListener('load', reqListener);
-    oReq.open('POST', parsedJSON['nextURL']);
-    oReq.send();
+    oReq.open('POST', parsedJSON['nextURL'], true);
+    oReq.setRequestHeader('Content-type', 'application/json');
+    oReq.send(jsonObject);
   })
 }
