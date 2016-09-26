@@ -10,23 +10,24 @@
 </head>
 <body>
 <main>
-  <h1>Crazy Questionnaire!</h1>
+  <h1>Yo! </h1>
 
-  <!-- For inserting the user nickname -->
-  <div id="nick_name_div">
+  <!-- A template for the quiz -->
+  <div id="start_the_quiz">
+
     <!-- HTTP GET -->
     <form action="start.html" method="get">
       <fieldset  class="form-horizontal">
-        <legend>Name Your Nick</legend>
+        <legend>Answer me!</legend>
 
-        <label for="nick_name">Please pick a nickname</label>
-        <input type="text" id="nick_name" name="contestant_name">
+        <label id="question_label" for="user_answer">Question is here</label> <br>
+        <input type="text" id="user_answer">
 
-        <button id="nick_name_button" class="button" type="submit">Done</button>
+        <button id="submit_button" class="button" type="submit">Done</button>
       </fieldset>
     </form>
-  </div>
 
+  </div>
 </main>
 
 <script src="javascript/build.js"></script>
