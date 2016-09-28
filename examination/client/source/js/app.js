@@ -1,3 +1,5 @@
+var isQuestion = true;
+
 /* Function for handling the nickname entry */
 function nickname() {
   var page_url = window.location.href;
@@ -27,36 +29,66 @@ window.addEventListener('load', function () {
     para.appendChild(text);
     document.getElementsByTagName('main')[0].appendChild(para);
 
-    var oReq = new XMLHttpRequest();
-    oReq.addEventListener('load', reqListener);
-    oReq.open('GET', 'http://vhost3.lnu.se:20080/question/1', true);
-    oReq.send();
+    var questionUrl = 'http://vhost3.lnu.se:20080/question/1';
+    createRequest(questionUrl);
   }
 }, false);
 
 /* Receive the response and form the questions */
 function reqListener() {
-  var response = this.responseText;
-  console.log(response);
-  var parsedJSON = JSON.parse(response);
+  console.log('Reply from server: '+ this.responseText);
+  var parsedJSON = JSON.parse(this.responseText);
 
-  var question_label = document.getElementById('question_label');
-  question_label.innerHTML = 'Question number ' + parsedJSON['id'] + ':\n' + parsedJSON['question'];
-  alert(parsedJSON['question']);
+  if(!this.response.includes('alternatives')) {
+    var no_alt_template = document.getElementById('no_alternative');
+    //debugger;
+    temp_clone = document.importNode(no_alt_template.content.firstElementChild, true);
+    document.getElementsByClassName('input-field col s6')[0].appendChild(temp_clone);
+
+    var question_label = document.getElementById('question_label_no_alt');
+    question_label.innerHTML = 'Question number ' + parsedJSON['id'] + ':\n' + parsedJSON['question'];
+
 //TODO:on submit button, post the answer to the new url
-  var submit_button = document.getElementById('submit_button');
+    var submit_button = document.getElementById('submit_button_noalt');
 
-  submit_button.addEventListener('click', function (event) {
-    alert("Submission button triggered");
-    var answer = document.getElementById('user_answer');
+    submit_button.addEventListener('click', function (event) {
 
-    var jsonObject = {"answer": answer, "content-type": "text"};
-    JSON.stringify(jsonObject);
-    debugger;
-    var oReq = new XMLHttpRequest();
-    oReq.addEventListener('load', reqListener);
-    oReq.open('POST', parsedJSON['nextURL'], true);
-    oReq.setRequestHeader('Content-type', 'application/json');
-    oReq.send(jsonObject);
-  })
+      var answer = document.getElementById('user_answer').value;
+
+      var jsonObject = {"answer":answer};
+      jsonObject = JSON.stringify(jsonObject);
+
+      var oReq = new XMLHttpRequest();
+      oReq.onreadystatechange = function () {
+        console.log('read state: ' + oReq.readyState);
+        if(oReq.readyState == 4 && oReq.status == 200 ) {
+          alert(oReq.responseText);
+          checkAnswer(oReq.responseText);
+          //    debugger;
+        }
+
+      };
+      oReq.open('POST', parsedJSON['nextURL'], true);
+      oReq.setRequestHeader('Content-Type', 'application/json');
+      oReq.send(jsonObject);
+      //   debugger;
+    })
+  }
+}
+
+function createRequest(url) {
+  var oReq = new XMLHttpRequest();
+  oReq.addEventListener('load', reqListener);
+  oReq.open('GET', url, true);
+  oReq.send();
+}
+
+function checkAnswer(response) {
+  var nextURL;
+  if(response.includes('Correct')) {
+    response = JSON.parse(response);
+    nextURL = response['nextURL'];
+    createRequest(nextURL);
+  }
+
 }

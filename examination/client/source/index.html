@@ -7,28 +7,36 @@
 
   <!-- CSS -->
   <link rel="stylesheet" type="text/css" href="stylesheet/style.css">
+  <!--Import Google Icon Font-->
+  <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <!--Import materialize.css-->
+  <link type="text/css" rel="stylesheet" href="stylesheet/materialize.min.css"  media="screen,projection"/>
+
 </head>
 <body>
 <main>
   <h1>Crazy Questionnaire!</h1>
 
   <!-- For inserting the user nickname -->
-  <div id="nick_name_div">
+  <div class="card-panel blue lighten-5" id="nick_name_div">
     <!-- HTTP GET -->
-    <form action="start.html" method="get">
-      <fieldset  class="form-horizontal">
-        <legend>Name Your Nick</legend>
+    <form class="col s12" action="start.html" method="get">
+      <div class="row">
+        <div class="input-field col s6">
 
-        <label for="nick_name">Please pick a nickname</label>
-        <input type="text" id="nick_name" name="contestant_name">
+          <label for="nick_name">Please pick a nickname</label>
+          <input type="text" id="nick_name" name="contestant_name">
 
-        <button id="nick_name_button" class="button" type="submit">Done</button>
-      </fieldset>
+          <button id="nick_name_button" class="btn waves-effect waves-light" type="submit">Done</button>
+        </div>
+      </div>
     </form>
   </div>
 
 </main>
-
+<!--Import jQuery before materialize.js-->
+<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+<script type="text/javascript" src="javascript/materialize.min.js"></script>
 <script src="javascript/build.js"></script>
 </body>
 </html>

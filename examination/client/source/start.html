@@ -7,29 +7,68 @@
 
   <!-- CSS -->
   <link rel="stylesheet" type="text/css" href="stylesheet/style.css">
+  <!--Import Google Icon Font-->
+  <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <!--Import materialize.css-->
+  <link type="text/css" rel="stylesheet" href="stylesheet/materialize.min.css"  media="screen,projection"/>
+
 </head>
 <body>
 <main>
   <h1>Yo! </h1>
 
   <!-- A template for the quiz -->
-  <div id="start_the_quiz">
 
-    <!-- HTTP GET -->
-    <form action="#" method="get">
-      <fieldset  class="form-horizontal">
-        <legend>Answer me!</legend>
+  <div class="card-panel blue lighten-5" id="start_the_quiz">
+    <!-- HTTP GET
+    <form class="col s12" action="#" method="get">
+     -->
+    <div class="row">
+      <div class="input-field col s6">
+        <template id="no_alternative">
+          <div>
+            <label id="question_label_no_alt" for="user_answer">Question is here</label> <br>
+            <input type="text" id="user_answer">
+            <button id="submit_button_noalt" class="btn waves-effect waves-light" type="button">Done</button>
+          </div>
+        </template>
 
-        <label id="question_label" for="user_answer">Question is here</label> <br>
-        <input type="text" id="user_answer">
+        <template id="alternative">
+          <label id="question_label_alt">Question is here</label> <br>
 
-        <button id="submit_button" class="button" type="submit">Done</button>
-      </fieldset>
-    </form>
+          <p>
+            <input name="group1" type="radio" id="ans1" />
+            <label for="ans1">Red</label>
+          </p>
+          <p>
+            <input name="group1" type="radio" id="ans2" />
+            <label for="ans2">Yellow</label>
+          </p>
+          <p>
+            <input class="with-gap" name="group1" type="radio" id="ans3"  />
+            <label for="ans3">Green</label>
+          </p>
+          <p>
+            <input name="group1" type="radio" id="ans4" disabled="disabled" />
+            <label for="ans4">Brown</label>
+          </p>
+          <p>
+            <button id="submit_button_alt" class="btn waves-effect waves-light">Done</button>
+          </p>
 
+        </template>
+
+      </div>
+    </div>
+    <!-- HTTP GET
+     </form>
+     -->
   </div>
-</main>
 
+</main>
+<!--Import jQuery before materialize.js-->
+<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+<script type="text/javascript" src="javascript/materialize.min.js"></script>
 <script src="javascript/build.js"></script>
 </body>
 </html>
