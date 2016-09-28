@@ -34,28 +34,27 @@
         </template>
 
         <template id="alternative">
-          <label id="question_label_alt">Question is here</label> <br>
+          <div id="div_inside_temp">
+            <label id="question_label_alt">Question is here</label> <br>
 
-          <p>
-            <input name="group1" type="radio" id="ans1" />
-            <label for="ans1">Red</label>
-          </p>
-          <p>
-            <input name="group1" type="radio" id="ans2" />
-            <label for="ans2">Yellow</label>
-          </p>
-          <p>
-            <input class="with-gap" name="group1" type="radio" id="ans3"  />
-            <label for="ans3">Green</label>
-          </p>
-          <p>
-            <input name="group1" type="radio" id="ans4" disabled="disabled" />
-            <label for="ans4">Brown</label>
-          </p>
-          <p>
+            <div>
+              <input name="group1" type="radio" id="alt1" />
+              <label class="labels" id="ans1" for="alt1">Red</label>
+            </div>
+            <div>
+              <input name="group1" type="radio" id="alt2" />
+              <label class="labels" id="ans2" for="alt2">Yellow</label>
+            </div>
+            <div>
+              <input name="group1" type="radio" id="alt3"  />
+              <label class="labels" id="ans3" for="alt3">Green</label>
+            </div>
+            <div id="alt4_div">
+              <input name="group1" type="radio" id="alt4"/>
+              <label class="labels" id="ans4" for="alt4">Brown</label>
+            </div>
             <button id="submit_button_alt" class="btn waves-effect waves-light">Done</button>
-          </p>
-
+          </div>
         </template>
 
       </div>
