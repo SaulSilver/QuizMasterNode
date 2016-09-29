@@ -16,26 +16,25 @@
 <body>
 <main>
   <h1>Yo! </h1>
-
-  <!-- A template for the quiz -->
-
+  <p id="timer">
+    Timer
+  </p>
   <div class="card-panel blue lighten-5" id="start_the_quiz">
-    <!-- HTTP GET
-    <form class="col s12" action="#" method="get">
-     -->
     <div class="row">
       <div class="input-field col s6">
+        <!-- A template for the quiz without alternatives-->
         <template id="no_alternative">
           <div>
-            <label id="question_label_no_alt" for="user_answer">Question is here</label> <br>
+            <h5 id="question_label_no_alt">Question is here</h5> <br>
             <input type="text" id="user_answer">
             <button id="submit_button_noalt" class="btn waves-effect waves-light" type="button">Done</button>
           </div>
         </template>
 
+        <!-- A template for the quiz with alternatives-->
         <template id="alternative">
           <div id="div_inside_temp">
-            <label id="question_label_alt">Question is here</label> <br>
+            <h5 id="question_label_alt">Question is here</h5> <br>
 
             <div>
               <input name="group1" type="radio" id="alt1" />
@@ -56,18 +55,47 @@
             <button id="submit_button_alt" class="btn waves-effect waves-light">Done</button>
           </div>
         </template>
-
       </div>
     </div>
-    <!-- HTTP GET
-     </form>
-     -->
   </div>
-
 </main>
+<aside>
+  <!--table to show the highscores-->
+  <table>
+    <thead>
+    <tr>
+      <th data-field="Nickname">Name</th>
+      <th data-field="Time">Time</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr>
+      <td class="table_user">user1</td>
+      <td class="table_time">0</td>
+    </tr>
+    <tr>
+      <td class="table_user">user2</td>
+      <td  class="table_time">0</td>
+    </tr>
+    <tr>
+      <td class="table_user">user3</td>
+      <td class="table_time">0</td>
+    </tr>
+    <tr>
+      <td class="table_user">user4</td>
+      <td class="table_time">0</td>
+    </tr>
+    <tr>
+      <td class="table_user">user5</td>
+      <td class="table_time">0</td>
+    </tr>
+    </tbody>
+  </table>
+</aside>
+<script src="javascript/build.js"></script>
 <!--Import jQuery before materialize.js-->
 <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
 <script type="text/javascript" src="javascript/materialize.min.js"></script>
-<script src="javascript/build.js"></script>
 </body>
 </html>

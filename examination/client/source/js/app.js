@@ -1,16 +1,31 @@
-/* Function for handling the nickname entry */
-function nickname() {
-  var page_url = window.location.href;
-  if (!page_url.includes('start')) {
-    var button = document.getElementById('nick_name_button');
+var timer;
+var elapsedCounter;
 
-    button.addEventListener('click', function (event) {
-      var nickName = document.getElementById('nick_name');
-      //TODO: Save the user nickname from local storage
-      localStorage.setItem('username', nickName.value);
-      console.log('went through the thing');
-    });
+//If the local storage isn't empty
+if(window.localStorage.length != 0) {
+  var highscoreArray;
+  var nickname;
+  var time;
+  var tableNames = document.getElementsByClassName('table_user');
+  var tableTimes = document.getElementsByClassName('table_time');
+  for (var i in localStorage) {
+    highscoreArray = JSON.parse(localStorage[i]);
+    nickname = highscoreArray[0];
+    time = highscoreArray[1];
+    tableNames[i].innerText = nickname;
+    tableTimes[i].innerText = highscoreArray;
   }
+}
+var page_url = window.location.href;
+// This will make the next block of code go only in the welcome page
+if (!page_url.includes('start')) {
+  var button = document.getElementById('nick_name_button');
+  button.addEventListener('click', function (event) {
+    sessionStorage.setItem('counter', JSON.stringify(Date.now()));
+    //Save the nickname in the session storage
+    var nickName = document.getElementById('nick_name');
+    sessionStorage.setItem('username', nickName.value ||'Default Nickname');
+  });
 }
 
 /*To start the quiz with only the first question*/
@@ -19,41 +34,50 @@ window.addEventListener('load', function () {
 
   //Check if this is the first question
   if (page_url.includes('start.html?contestant_name')) {
-    //TODO: Get the user nickname from local storage
-    var para = document.createElement('p');
-    var nick = localStorage.getItem('username') ||'Default Nickname';
-    var text = document.createTextNode(nick);
+    var timerText = document.getElementById('timer');
+    timer = setTimeout(function () {
+      returnToMain('Time is up')
+    }, 20000);
+    // TODO: update the text for timer
+    // var showTimer = setInterval(function () {
+    //   timerText.innerText = timer.getTime();
+    // }, 1000);
 
-    para.appendChild(text);
-    document.getElementsByTagName('main')[0].appendChild(para);
+    //Show nickname
+    var header = document.getElementsByTagName('h1')[0];
+    var nick = sessionStorage.getItem('username');
+    header.innerText = 'Yo! ' + nick;
 
     var questionUrl = 'http://vhost3.lnu.se:20080/question/1';
+    //Send a GET request to retrieve the first question
     createGetRequest(questionUrl);
   }
 }, false);
 
 /* Receive the response and form the questions */
 function reqListener() {
-  console.log('Reply from server: '+ this.responseText);
   var parsedJSON = JSON.parse(this.responseText);
 
   /* For questions without choices */
   if(!this.response.includes('alternatives')) {
+
     //Using the template with no alternatives
     var no_alt_template = document.getElementById('no_alternative');
     var temp_clone = document.importNode(no_alt_template.content.firstElementChild, true);
     document.getElementsByClassName('input-field col s6')[0].appendChild(temp_clone);
 
     var question_label = document.getElementById('question_label_no_alt');
-    question_label.innerHTML = 'Question number ' + parsedJSON['id'] + ':\n' + parsedJSON['question'];
+    question_label.innerText = 'Question number ' + parsedJSON['id'] + ':\n' + parsedJSON['question'];
 
     var submit_button = document.getElementById('submit_button_noalt');
 
     submit_button.addEventListener('click', function (event) {
+      clearTimeout(timer);
       var answer = document.getElementById('user_answer').value;
 
       //Method call to create the post request
       createPostRequest(parsedJSON, answer);
+      //Clear the template from the page (prevents overlapped templates)
       document.getElementsByClassName('input-field col s6')[0].removeChild(temp_clone);
     });
   }
@@ -72,13 +96,13 @@ function reqListener() {
     document.getElementsByClassName('input-field col s6')[0].appendChild(temp_alt_clone);
 
     var question_label_alt = document.getElementById('question_label_alt');
-    question_label_alt.innerHTML = 'Question ' + parsedJSON['id'] + ': \t'+ parsedJSON['question'];
+    question_label_alt.innerText = 'Question ' + parsedJSON['id'] + ': \t'+ parsedJSON['question'];
 
     var labels = document.getElementsByClassName('labels');
 
+    //Adding the alternatives labels to the radio buttons
     for (var i = 0; i < alternatives_number ; i++) {
       var alt = 'alt'+ (i + 1);
-      //  debugger;
       labels[i].innerText =  parsedJSON.alternatives[alt];
     }
     //Checks if there is only 3 alternatives, then remove the 4th radio button
@@ -88,10 +112,11 @@ function reqListener() {
     var submitAns = document.getElementById('submit_button_alt');
     var answer;
     submitAns.addEventListener('click', function (event) {
+      clearTimeout(timer);
       var radioButtons = document.getElementsByName('group1');
+      //To check which radio button is chosen
       for (var i = 0; i < radioButtons.length; i++) {
         var what = radioButtons[i];
-        // debugger;
         if (radioButtons[i].checked) {
           answer = radioButtons[i].id;
           break;
@@ -99,11 +124,13 @@ function reqListener() {
       }
       //Method call to create the post request
       createPostRequest(parsedJSON, answer);
+      //Clear the template from the page (prevents overlapped templates)
       document.getElementsByClassName('input-field col s6')[0].removeChild(temp_alt_clone);
     });
   }
 }
 
+/* A method to create a GET request with the specified 'url' */
 function createGetRequest(url) {
   var oReq = new XMLHttpRequest();
   oReq.addEventListener('load', reqListener);
@@ -111,6 +138,7 @@ function createGetRequest(url) {
   oReq.send();
 }
 
+/* A method to create a POST request with the specified 'answer' and 'parsedJSON' to get the next url */
 function createPostRequest(parsedJSON, answer) {
   var jsonObject = {"answer":answer};
   jsonObject = JSON.stringify(jsonObject);
@@ -118,22 +146,34 @@ function createPostRequest(parsedJSON, answer) {
   var oReq = new XMLHttpRequest();
 
   oReq.onreadystatechange = function () {
-    console.log('read state: ' + oReq.readyState);
     if(oReq.readyState == 4 && oReq.status == 200 ) {
-      console.log(oReq.responseText);
-      //debugger;
-      var response = JSON.parse(oReq.responseText);
-      createGetRequest(response['nextURL']);
 
+      var response = JSON.parse(oReq.responseText);
+      //The quiz is not over
+      if(response['nextURL'] != null)
+        createGetRequest(response['nextURL']);
+      //The quiz is over
+      else {
+        elapsedCounter = (Date.now() - parseInt(JSON.parse(sessionStorage.getItem('counter')))) / 1000;
+        returnToMain('Congratulations! You have aced this crazy blazy quiz! ' + elapsedCounter);
+      }
     } else if(oReq.readyState == 4 && oReq.status == 400 ) {
-      //TODO: stop counter, save score in web storage and show it in the alert window
-      window.location.href = 'index.html';
-      alert('You have answered wrong mate :(' +  '\nTry again!' + '\nYour score is: '  );
+      returnToMain('You have answered wrong mate :(' +  '\nTry again!');
     }
   };
   oReq.open('POST', parsedJSON['nextURL'], true);
   oReq.setRequestHeader('Content-Type', 'application/json');
   oReq.send(jsonObject);
-  //   debugger;
 }
 
+/*Method that takes the user back to the main page */
+function returnToMain(message) {
+  //TODO: stop counter, save score in web storage and show it in the alert window
+  clearTimeout(timer);
+  var nickname = sessionStorage.getItem('username');
+  var highscore = [nickname, elapsedCounter];
+
+  localStorage.setItem(nickname, JSON.stringify(highscore));
+  window.location.href = 'index.html';
+  alert(message);
+}
