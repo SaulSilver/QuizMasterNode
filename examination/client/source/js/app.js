@@ -1,21 +1,24 @@
 var timer;
 var elapsedCounter;
 
-//If the local storage isn't empty
-if(window.localStorage.length != 0) {
-  var highscoreArray;
+//If the local storage isn't empty, else Set up the highscore table
+if(localStorage.length != 0) {
   var nickname;
   var time;
   var tableNames = document.getElementsByClassName('table_user');
   var tableTimes = document.getElementsByClassName('table_time');
-  for (var i in localStorage) {
-    highscoreArray = JSON.parse(localStorage[i]);
-    nickname = highscoreArray[0];
-    time = highscoreArray[1];
-    tableNames[i].innerText = nickname;
-    tableTimes[i].innerText = highscoreArray;
+  for (var i = 0; i < localStorage.length; i++) {
+    if(i == 5)
+      break;
+    nickname = localStorage.key(i);
+    time = localStorage[nickname];
+    var name = tableNames.item(i);
+    name.innerText = nickname;
+    var time1 = tableTimes.item(i);
+    time1.innerText = time;
   }
 }
+
 var page_url = window.location.href;
 // This will make the next block of code go only in the welcome page
 if (!page_url.includes('start')) {
@@ -171,9 +174,39 @@ function returnToMain(message) {
   //TODO: stop counter, save score in web storage and show it in the alert window
   clearTimeout(timer);
   var nickname = sessionStorage.getItem('username');
-  var highscore = [nickname, elapsedCounter];
 
-  localStorage.setItem(nickname, JSON.stringify(highscore));
+  checkLocalStorage(nickname, elapsedCounter);
+
   window.location.href = 'index.html';
   alert(message);
+}
+
+function checkLocalStorage(newName, newHighscore) {
+  if(localStorage.length != 0) {
+    var newArray = [newName, newHighscore];
+    var nickname;
+    var time;
+    var oneScore;
+    var highscoreArray = new Array(localStorage.length + 1);
+    for (var i = 0; i < localStorage.length; i++) {
+      nickname = localStorage.key(i);
+      time  = localStorage[nickname];
+      oneScore = [nickname, time];
+      highscoreArray.push(oneScore);
+    }
+    localStorage.clear();
+    highscoreArray.push(newArray);
+    highscoreArray.sort(function (k1, k2) {
+      var tim1 =  k2[1];
+      var tim2 =  k1[1];
+      return tim1- tim2;
+    });
+
+    for (var k = 0; k < highscoreArray.length / 2; k++) {
+      oneScore = highscoreArray[k];
+      localStorage.setItem(oneScore[0], oneScore[1].toString());
+    }
+  } else {
+    localStorage.setItem(newName, newHighscore);
+  }
 }
