@@ -8,6 +8,7 @@ if(localStorage.length != 0) {
   var tableNames = document.getElementsByClassName('table_user');
   var tableTimes = document.getElementsByClassName('table_time');
   for (var i = 0; i < localStorage.length; i++) {
+    //Takes the top 5 highscores only
     if(i == 5)
       break;
     nickname = localStorage.key(i);
@@ -38,13 +39,14 @@ window.addEventListener('load', function () {
   //Check if this is the first question
   if (page_url.includes('start.html?contestant_name')) {
     var timerText = document.getElementById('timer');
+    var start = Date.now();
     timer = setTimeout(function () {
       returnToMain('Time is up')
-    }, 20000);
+    }, 21000);
     // TODO: update the text for timer
-    // var showTimer = setInterval(function () {
-    //   timerText.innerText = timer.getTime();
-    // }, 1000);
+     var showTimer = setInterval(function () {
+       timerText.innerText = (Date.now() - start) / 1000 + ' : 20';
+     }, 1000);
 
     //Show nickname
     var header = document.getElementsByTagName('h1')[0];
@@ -181,6 +183,7 @@ function returnToMain(message) {
   alert(message);
 }
 
+/*A method to sort the highscore table according to the user time */
 function checkLocalStorage(newName, newHighscore) {
   if(localStorage.length != 0) {
     var newArray = [newName, newHighscore];
@@ -196,6 +199,7 @@ function checkLocalStorage(newName, newHighscore) {
     }
     localStorage.clear();
     highscoreArray.push(newArray);
+    //Sort according to time
     highscoreArray.sort(function (k1, k2) {
       var tim1 =  k2[1];
       var tim2 =  k1[1];
@@ -204,7 +208,7 @@ function checkLocalStorage(newName, newHighscore) {
 
     for (var k = 0; k < highscoreArray.length / 2; k++) {
       oneScore = highscoreArray[k];
-      localStorage.setItem(oneScore[0], oneScore[1].toString());
+      localStorage.setItem(oneScore[0], oneScore[1]);
     }
   } else {
     localStorage.setItem(newName, newHighscore);
