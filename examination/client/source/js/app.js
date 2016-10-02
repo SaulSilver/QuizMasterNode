@@ -1,28 +1,37 @@
+//The 20 seconds timer variable
 var timer;
-var elapsedCounter;
-
-//If the local storage isn't empty, else Set up the highscore table
-if(localStorage.length != 0) {
-  var nickname;
-  var time;
-  var tableNames = document.getElementsByClassName('table_user');
-  var tableTimes = document.getElementsByClassName('table_time');
-  for (var i = 0; i < localStorage.length; i++) {
-    //Takes the top 5 highscores only
-    if(i == 5)
-      break;
-    nickname = localStorage.key(i);
-    time = localStorage[nickname];
-    var name = tableNames.item(i);
-    name.innerText = nickname;
-    var time1 = tableTimes.item(i);
-    time1.innerText = time;
-  }
-}
 
 var page_url = window.location.href;
 // This will make the next block of code go only in the welcome page
 if (!page_url.includes('start')) {
+  //If the local storage isn't empty, else Set up the highscore table
+  if(localStorage.length != 0) {
+    var highscoreArray = new Array(localStorage.length);
+    var oneScore;
+    var nickname;
+    var time;
+    var tableNames = document.getElementsByClassName('table_user');
+    var tableTimes = document.getElementsByClassName('table_time');
+    for (var i = 0; i < localStorage.length; i++) {
+      //Takes the top 5 highscores only
+      if(i == 5)
+        break;
+      nickname = localStorage.key(i);
+      time = localStorage[nickname];
+      oneScore = [nickname, time];
+      highscoreArray.push(oneScore);
+    }
+    //ascending sorting of the array according to the timing
+    highscoreArray.sort(function (k1, k2) {
+      return k1[1]- k2[1];
+    });
+
+    for (var k = 0; k < highscoreArray.length / 2; k++) {
+      oneScore = highscoreArray[k];
+      tableNames.item(k).innerText = oneScore[0];
+      tableTimes.item(k).innerText = oneScore[1];
+    }
+  }
   var button = document.getElementById('nick_name_button');
   button.addEventListener('click', function (event) {
     sessionStorage.setItem('counter', JSON.stringify(Date.now()));
@@ -34,19 +43,18 @@ if (!page_url.includes('start')) {
 
 /*To start the quiz with only the first question*/
 window.addEventListener('load', function () {
-  var page_url = window.location.href;
-
   //Check if this is the first question
   if (page_url.includes('start.html?contestant_name')) {
     var timerText = document.getElementById('timer');
     var start = Date.now();
+    //Timeout every 20 seconds. Reset on every question
     timer = setTimeout(function () {
       returnToMain('Time is up')
     }, 21000);
-    // TODO: update the text for timer
-     var showTimer = setInterval(function () {
-       timerText.innerText = (Date.now() - start) / 1000 + ' : 20';
-     }, 1000);
+    //update the text for timer
+    var showTimer = setInterval(function () {
+      timerText.innerText = Math.round((Date.now() - start) / 1000) + ' : 20';
+    }, 1000);
 
     //Show nickname
     var header = document.getElementsByTagName('h1')[0];
@@ -77,6 +85,7 @@ function reqListener() {
     var submit_button = document.getElementById('submit_button_noalt');
 
     submit_button.addEventListener('click', function (event) {
+      //Stop the timer for this question
       clearTimeout(timer);
       var answer = document.getElementById('user_answer').value;
 
@@ -159,7 +168,10 @@ function createPostRequest(parsedJSON, answer) {
         createGetRequest(response['nextURL']);
       //The quiz is over
       else {
-        elapsedCounter = (Date.now() - parseInt(JSON.parse(sessionStorage.getItem('counter')))) / 1000;
+        var elapsedCounter = (Date.now() - parseInt(JSON.parse(sessionStorage.getItem('counter')))) / 1000;
+        var nickname = sessionStorage.getItem('username');
+        localStorage.setItem(nickname, elapsedCounter);
+
         returnToMain('Congratulations! You have aced this crazy blazy quiz! ' + elapsedCounter);
       }
     } else if(oReq.readyState == 4 && oReq.status == 400 ) {
@@ -175,42 +187,7 @@ function createPostRequest(parsedJSON, answer) {
 function returnToMain(message) {
   //TODO: stop counter, save score in web storage and show it in the alert window
   clearTimeout(timer);
-  var nickname = sessionStorage.getItem('username');
-
-  checkLocalStorage(nickname, elapsedCounter);
 
   window.location.href = 'index.html';
   alert(message);
-}
-
-/*A method to sort the highscore table according to the user time */
-function checkLocalStorage(newName, newHighscore) {
-  if(localStorage.length != 0) {
-    var newArray = [newName, newHighscore];
-    var nickname;
-    var time;
-    var oneScore;
-    var highscoreArray = new Array(localStorage.length + 1);
-    for (var i = 0; i < localStorage.length; i++) {
-      nickname = localStorage.key(i);
-      time  = localStorage[nickname];
-      oneScore = [nickname, time];
-      highscoreArray.push(oneScore);
-    }
-    localStorage.clear();
-    highscoreArray.push(newArray);
-    //Sort according to time
-    highscoreArray.sort(function (k1, k2) {
-      var tim1 =  k2[1];
-      var tim2 =  k1[1];
-      return tim1- tim2;
-    });
-
-    for (var k = 0; k < highscoreArray.length / 2; k++) {
-      oneScore = highscoreArray[k];
-      localStorage.setItem(oneScore[0], oneScore[1]);
-    }
-  } else {
-    localStorage.setItem(newName, newHighscore);
-  }
 }
