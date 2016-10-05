@@ -1,5 +1,5 @@
 //The 20 seconds timer variable
-var timer;
+//var timer;
 
 var page_url = window.location.href;
 // This will make the next block of code go only in the welcome page
@@ -45,16 +45,6 @@ if (!page_url.includes('start')) {
 window.addEventListener('load', function () {
   //Check if this is the first question
   if (page_url.includes('start.html?contestant_name')) {
-    var timerText = document.getElementById('timer');
-    var start = Date.now();
-    //Timeout every 20 seconds. Reset on every question
-    timer = setTimeout(function () {
-      returnToMain('Time is up')
-    }, 21000);
-    //update the text for timer
-    var showTimer = setInterval(function () {
-      timerText.innerText = Math.round((Date.now() - start) / 1000) + ' : 20';
-    }, 1000);
 
     //Show nickname
     var header = document.getElementsByTagName('h1')[0];
@@ -70,6 +60,19 @@ window.addEventListener('load', function () {
 /* Receive the response and form the questions */
 function reqListener() {
   var parsedJSON = JSON.parse(this.responseText);
+
+  //Timer
+  var timerText = document.getElementById('timer');
+  var start = Date.now();
+  //Timeout every 20 seconds. Reset on every question
+
+  var timer = setTimeout(function () {
+    returnToMain('Time is up')
+  }, 21000);
+  //update the text for timer
+  var showTimer = setInterval(function () {
+    timerText.innerText = (21 - Math.round((Date.now() - start) / 1000));
+  }, 1000);
 
   /* For questions without choices */
   if(!this.response.includes('alternatives')) {
@@ -87,6 +90,7 @@ function reqListener() {
     submit_button.addEventListener('click', function (event) {
       //Stop the timer for this question
       clearTimeout(timer);
+      clearInterval(showTimer);
       var answer = document.getElementById('user_answer').value;
 
       //Method call to create the post request
@@ -127,6 +131,7 @@ function reqListener() {
     var answer;
     submitAns.addEventListener('click', function (event) {
       clearTimeout(timer);
+      clearInterval(showTimer);
       var radioButtons = document.getElementsByName('group1');
       //To check which radio button is chosen
       for (var i = 0; i < radioButtons.length; i++) {
