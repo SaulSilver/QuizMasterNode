@@ -108,7 +108,7 @@ function reqListener() {
       alternatives_number = 4;
     else alternatives_number = 3;
 
-    //Using the template with no alternatives
+    //Using the template with alternatives
     var alt_template = document.getElementById('alternative');
     var temp_alt_clone = document.importNode(alt_template.content.firstElementChild, true);
     document.getElementsByClassName('input-field col s6')[0].appendChild(temp_alt_clone);

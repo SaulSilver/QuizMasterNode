@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Crazy Questionnaire</title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" type="text/css" href="stylesheet/style.css">
+  <!--Import Google Icon Font-->
+  <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <!--Import materialize.css-->
+  <link type="text/css" rel="stylesheet" href="stylesheet/materialize.min.css"  media="screen"/>
+
+</head>
+<body>
+<main>
+  <h1>Crazy Questionnaire!</h1>
+
+  <!-- For inserting the user nickname -->
+  <div class="card-panel blue lighten-5" id="nick_name_div">
+    <!-- HTTP GET -->
+    <form class="col s12" action="start.html" method="get">
+      <div class="row">
+        <div class="input-field col s6">
+
+          <label for="nick_name">Please pick a nickname</label>
+          <input type="text" id="nick_name" name="contestant_name">
+
+          <button id="nick_name_button" class="btn waves-effect waves-light" type="submit">Done</button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+</main>
+<aside>
+  <div class="card-panel blue lighten-5">
+    <!--table to show the highscores-->
+    <table>
+      <thead>
+      <tr>
+        <th data-field="Nickname">Name</th>
+        <th data-field="Time">Time</th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <tr>
+        <td class="table_user">user1</td>
+        <td class="table_time">0</td>
+      </tr>
+      <tr>
+        <td class="table_user">user2</td>
+        <td  class="table_time">0</td>
+      </tr>
+      <tr>
+        <td class="table_user">user3</td>
+        <td class="table_time">0</td>
+      </tr>
+      <tr>
+        <td class="table_user">user4</td>
+        <td class="table_time">0</td>
+      </tr>
+      <tr>
+        <td class="table_user">user5</td>
+        <td class="table_time">0</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</aside>
+<!--Import jQuery before materialize.js-->
+<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+<script type="text/javascript" src="javascript/materialize.min.js"></script>
+<script src="javascript/build.js"></script>
+</body>
+</html>
